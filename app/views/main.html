@@ -4,5 +4,6 @@
         <br/>
         <pre>Model: {{selected| json}}</pre>
         <input type="text" ng-model="selected" data-typeahead="state for state in states | filter:$viewValue | limitTo:20">
+        <input type="text" ng-model="selected2" data-mega-typeahead-wrapper="typeaheadConfig">
     </div>
 </div>
