@@ -1,0 +1,8 @@
+<div class='container-fluid' ng-controller="MainCtrl">
+    <div class="hero-unit">
+        <h1>Mega Typeahead</h1>
+        <br/>
+        <pre>Model: {{selected| json}}</pre>
+        <input type="text" ng-model="selected" data-typeahead="state for state in states | filter:$viewValue | limitTo:20">
+    </div>
+</div>
