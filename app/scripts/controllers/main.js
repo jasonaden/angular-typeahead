@@ -9,6 +9,8 @@ angular.module('megatypeaheadApp')
         $scope.selected = undefined;
 
         $scope.typeaheadConfig = {
+            minSearch: 1,
+            waitTime: 0,
             sources: [
                 {
                     tabName: 'States',
