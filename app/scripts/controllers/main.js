@@ -13,12 +13,12 @@ angular.module('megatypeaheadApp')
                 {
                     tabName: 'States',
                     data: states,
-                    source: 'state for state in source | filter:$viewValue | limitTo:20'
+                    source: 'state for state in source.data | limitTo:20'
                 },
                 {
                     tabName: 'Cities',
                     data: cities,
-                    source: 'city for city in source | filter:$viewValue | limitTo:20'
+                    source: 'city for city in source.data | filter:$viewValue | limitTo:20'
                 }
             ]
         }

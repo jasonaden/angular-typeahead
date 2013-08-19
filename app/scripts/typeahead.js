@@ -93,7 +93,6 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     //$parsers kick-in on all the changes coming from the view as well as manually triggered by $setViewValue
                     modelCtrl.$parsers.push(function (inputValue) {
 
-                        // resetMatches();
                         if (inputValue && inputValue.length >= minSearch) {
                             if (waitTime > 0) {
                                 if (timeoutPromise) {
@@ -105,6 +104,8 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                             } else {
                                 getMatchesAsync(inputValue);
                             }
+                        } else {
+                            scope.query = undefined;
                         }
 
                         return undefined;
@@ -200,12 +201,12 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
         function ($compile, $parse, $q, $timeout, $document, $position, megaTypeaheadParser) {
 
         return {
-            link: function (originalScope, element, attrs, modelCtrl) {
+            link: function (scope, element, attrs, modelCtrl) {
 
                 //SUPPORTED ATTRIBUTES (OPTIONS)
 
                 //should it restrict model values to the ones selected from the popup only?
-                var isEditable = originalScope.$eval(attrs.typeaheadEditable) !== false;
+                var isEditable = scope.$eval(attrs.typeaheadEditable) !== false;
 
                 //binding to a variable that indicates if matches are being retrieved asynchronously
                 var isLoadingSetter = $parse(attrs.typeaheadLoading).assign || angular.noop;
@@ -213,7 +214,9 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                 //INTERNAL VARIABLES
                 //expressions used by typeahead
-                var parserResult = megaTypeaheadParser.parse($parse(attrs.megaTypeaheadPane)(originalScope));
+                var parserResult = megaTypeaheadParser.parse($parse(attrs.megaTypeaheadPane)(scope));
+
+                console.log('parserResult', parserResult);
 
                 //custom item template
                 if (angular.isDefined(attrs.typeaheadTemplateUrl)) {
@@ -222,10 +225,10 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                 //create a child scope for the typeahead directive so we are not polluting original scope
                 //with typeahead-specific data (matches, query etc.)
-                var scope = originalScope.$new();
-                originalScope.$on('$destroy', function () {
-                    scope.$destroy();
-                });
+//                var scope = scope.$new();
+//                scope.$on('$destroy', function () {
+//                    scope.$destroy();
+//                });
 
                 var resetMatches = function () {
                     scope.matches = [];
@@ -235,7 +238,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 var getMatchesAsync = function (inputValue) {
 
                     var locals = {$viewValue: inputValue};
-                    isLoadingSetter(originalScope, true);
+                    isLoadingSetter(scope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
 
                         //it might happen that several async queries were in progress if a user were typing fast
@@ -255,7 +258,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                                     });
                                 }
 
-                                scope.query = inputValue;
+                                //scope.query = inputValue;
                                 //position pop-up with matches - we need to re-calculate its position each time we are opening a window
                                 //with matches as a pop-up might be absolute-positioned and position of an input might have changed on a page
                                 //due to other elements being rendered
@@ -265,18 +268,18 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                             } else {
                                 resetMatches();
                             }
-                            isLoadingSetter(originalScope, false);
+                            isLoadingSetter(scope, false);
                         //}
                     }, function () {
                         resetMatches();
-                        isLoadingSetter(originalScope, false);
+                        isLoadingSetter(scope, false);
                     });
                 };
 
                 resetMatches();
 
                 //we need to propagate user's query so we can higlight matches
-                scope.query = undefined;
+                //scope.query = undefined;
 
                 //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
                 var timeoutPromise;
@@ -303,7 +306,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 });*/
 
                 //bind keyboard events: arrows up(38) / down(40), enter(13) and tab(9), esc(27)
-                originalScope.$watch('query', function (val) {
+                scope.$watch('query', function (val) {
                     resetMatches();
                     if (val && val.length) {
                         getMatchesAsync(val);
