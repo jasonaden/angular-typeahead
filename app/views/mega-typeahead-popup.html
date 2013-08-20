@@ -1,6 +1,17 @@
 <div class="megatypeahead" ng-style="{display: isOpen()&&'block' || 'none', top: position.top+'px', left: position.left+'px'}" style="width:800px;height:360px; padding:5px; background:white;">
+    <div class="pagination pull-right">
+        <ul>
+            <li><a data-ng-click="master.currentSource.offset = master.currentSource.offset - 1">Prev</a></li>
+            <li data-ng-class="{active: master.currentSource.offset == 0}"><a data-ng-click="master.currentSource.offset = 0">1</a></li>
+            <li data-ng-class="{active: master.currentSource.offset == 1}"><a data-ng-click="master.currentSource.offset = 1">2</a></li>
+            <li data-ng-class="{active: master.currentSource.offset == 2}"><a data-ng-click="master.currentSource.offset = 2">3</a></li>
+            <li data-ng-class="{active: master.currentSource.offset == 3}"><a data-ng-click="master.currentSource.offset = 3">4</a></li>
+            <li data-ng-class="{active: master.currentSource.offset == 4}"><a data-ng-click="master.currentSource.offset = 4">5</a></li>
+            <li><a data-ng-click="master.currentSource.offset = master.currentSource.offset + 1">Next</a></li>
+        </ul>
+    </div>
     <div data-tabset>
-        <tab ng-repeat="source in master.sources" heading="{{source.tabName}}" active="source.active" disabled="source.disabled" select="currentTab($index)">
+        <tab ng-repeat="source in master.sources" heading="{{source.tabName}}" active="source.active" disabled="source.disabled" select="currentTab($index, source)">
             <div mega-typeahead-pane="source.source" ng-controller="source.controller">
                 <ul style="height:300px;columns:200px 2;-webkit-columns:200px 2;-moz-columns:200px 2" class="typeahead" ng-style="{display: isOpen()&&'block' || 'none'}">
                     <li ng-repeat="match in matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch(match)">

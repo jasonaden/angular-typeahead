@@ -67,6 +67,8 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     // Default to empty controller constructor
                     angular.forEach(sources, function (source, idx) {
                         source.controller = source.controller || angular.noop;
+                        source.limit = source.limit || 5;
+                        source.offset = source.offset || 0;
                     });
 
                     //pop-up element used to display matches
@@ -158,9 +160,10 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     };
 
                     // Set the current tab so we know where we are. Change selected index to -1 when changing tabs.
-                    scope.currentTab = function (idx) {
+                    scope.currentTab = function (idx, source) {
                         scope.master.tab = idx || 0;
                         scope.master.activeIdx = -1;
+                        scope.master.currentSource = source;
                         element[0].focus();
                     }
 
@@ -240,7 +243,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                 var getMatchesAsync = function (inputValue) {
 
-                    var locals = {$viewValue: inputValue};
+                    var locals = {$viewValue: inputValue, limit: scope.master.currentSource.limit, offset: scope.master.currentSource.offset};
                     isLoadingSetter(scope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
 
@@ -272,9 +275,13 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 };
 
                 resetMatches();
+                scope.$watch('source.offset', function (val) {
+                    getMatchesAsync(scope.master.query)
+                });
 
                 //bind keyboard events: arrows up(38) / down(40), enter(13) and tab(9), esc(27)
                 scope.$watch('master.query', function (val) {
+
                     resetMatches();
                     if (val && val.length) {
                         getMatchesAsync(val);

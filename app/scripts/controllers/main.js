@@ -13,11 +13,32 @@ angular.module('megatypeaheadApp')
                 return $filter('limitTo')(response.data, 150);
             });
         };
+        $scope.newCities = function(cityName, limit, offset) {
+            return $http.jsonp("http://localhost:3000/search?callback=JSON_CALLBACK&limit="+limit+"&offset="+offset+"&q="+cityName).then(function(response){
+                return $filter('limitTo')(response.data, 150);
+            });
+        };
 
         $scope.typeaheadConfig = {
             minSearch: 1,
             waitTime: 0,
             sources: [
+                {
+                    tabName: 'New Cities',
+                    data: cities,
+                    templateUrl: "'views/city-match.html'",
+                    //controller: 'CitiesTabController',
+                    controller: function ($scope) {
+                        $scope.clickedIt = function (data) {
+                            alert(data);
+                        }
+                        $scope.selectItem = function (type, data) {
+                            console.log(type + ': ' + data);
+                        }
+                    },
+                    limit: 7,
+                    source: 'suggestion for suggestion in newCities($viewValue, limit, offset)'
+                },
                 {
                     tabName: 'Cities',
                     data: cities,
