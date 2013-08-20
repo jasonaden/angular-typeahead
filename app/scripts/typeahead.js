@@ -37,6 +37,8 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 link: function (originalScope, element, attrs, modelCtrl) {
 
 
+                    var $setModelValue = $parse(attrs.ngModel).assign;
+
                     //create a child scope for the typeahead directive so we are not polluting original scope
                     //with typeahead-specific data (matches, query etc.)
                     var scope = originalScope.$new();
@@ -62,8 +64,13 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         select: 'select(activeIdx)'
                     });
 
+                    // Default to empty controller constructor
+                    angular.forEach(sources, function (source, idx) {
+                        source.controller = source.controller || angular.noop;
+                    });
+
                     //pop-up element used to display matches
-                    var popUpEl = angular.element('<mega-typeahead-popup></mega-typeahead-popup>'),
+                    var popUpEl = angular.element('<div data-mega-typeahead-popup></div>'),
                         updateSearch = function (inputValue) {
 
                             scope.master.activeIdx = 0;
@@ -125,23 +132,28 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 //                    });
 
                     // TODO: Write this method
-                    scope.select = function (activeIdx) {
+                    scope.select = function (item) {
                         //called from within the $digest() cycle
                         var locals = {};
                         var model, item;
 
-                        locals[parserResult.itemName] = item = scope.matches[activeIdx].model;
-                        model = parserResult.modelMapper(originalScope, locals);
+                        if (options.multiple) {
+
+                        } else {
+                            //locals[parserResult.itemName] = item = scope.matches[activeIdx].model;
+                            //model = parserResult.modelMapper(originalScope, locals);
+                            model = item
+                        }
                         $setModelValue(originalScope, model);
 
-                        onSelectCallback(originalScope, {
-                            $item: item,
-                            $model: model,
-                            $label: parserResult.viewMapper(originalScope, locals)
-                        });
+//                        onSelectCallback(originalScope, {
+//                            $item: item,
+//                            $model: model,
+//                            $label: parserResult.viewMapper(originalScope, locals)
+//                        });
 
                         //return focus to the input element if a mach was selected via a mouse click event
-                        resetMatches();
+                        //resetMatches();
                         element[0].focus();
                     };
 
@@ -149,7 +161,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     scope.currentTab = function (idx) {
                         scope.master.tab = idx || 0;
                         scope.master.activeIdx = -1;
-                        element.focus();
+                        element[0].focus();
                     }
 
                     // TODO: Rework this to deal with tabs
@@ -244,7 +256,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                                 for (var i = 0; i < matches.length; i++) {
                                     locals[parserResult.itemName] = matches[i];
                                     scope.matches.push({
-                                        label: parserResult.viewMapper(scope, locals),
+                                        data: parserResult.viewMapper(scope, locals),
                                         model: matches[i]
                                     });
                                 }
@@ -277,7 +289,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
     }])
     .directive('megaTypeaheadPopup', function () {
         return {
-            restrict: 'E',
+            restrict: 'A',
             scope: true,
             replace: true,
             templateUrl: 'views/mega-typeahead-popup.html',
@@ -296,8 +308,8 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     scope.master.activeIdx = matchIdx;
                 };
 
-                scope.selectMatch = function (activeIdx) {
-                    scope.select({activeIdx: activeIdx});
+                scope.selectMatch = function (match) {
+                    scope.select({item: match});
                 };
             }
         };
@@ -307,7 +319,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
             restrict: 'E',
             scope: true,
             link: function (scope, element, attrs) {
-                var tplUrl = $parse(attrs.templateUrl)(scope.$parent) || 'views/typeahead-match.html';
+                var tplUrl = $parse(scope.source.templateUrl)(scope) || 'views/typeahead-match.html';
                 $http.get(tplUrl, {cache: $templateCache}).success(function (tplContent) {
                     element.replaceWith($compile(tplContent.trim())(scope));
                 });

@@ -1,9 +1,9 @@
 <div class="megatypeahead" ng-style="{display: isOpen()&&'block' || 'none', top: position.top+'px', left: position.left+'px'}" style="width:800px;height:360px; padding:5px; background:white;">
     <div data-tabset>
         <tab ng-repeat="source in master.sources" heading="{{source.tabName}}" active="source.active" disabled="source.disabled" select="currentTab($index)">
-            <div mega-typeahead-pane="source.source">
+            <div mega-typeahead-pane="source.source" ng-controller="source.controller">
                 <ul style="height:300px;columns:200px 2;-webkit-columns:200px 2;-moz-columns:200px 2" class="typeahead" ng-style="{display: isOpen()&&'block' || 'none'}">
-                    <li ng-repeat="match in matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)">
+                    <li ng-repeat="match in matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch(match)">
                         <mega-typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></mega-typeahead-match>
                     </li>
                 </ul>
