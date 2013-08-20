@@ -22,6 +22,7 @@ angular.module('megatypeaheadApp')
         $scope.typeaheadConfig = {
             minSearch: 1,
             waitTime: 0,
+            multiple: true,
             sources: [
                 {
                     tabName: 'New Cities',

@@ -37,6 +37,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 link: function (originalScope, element, attrs, modelCtrl) {
 
 
+                    var $setSelectionValue = $parse(attrs.megaTypeaheadSelection).assign;
                     var $setModelValue = $parse(attrs.ngModel).assign;
 
                     //create a child scope for the typeahead directive so we are not polluting original scope
@@ -45,13 +46,19 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     originalScope.$on('$destroy', function () {
                         scope.$destroy();
                     });
-
                     var options = $parse(attrs.megaTypeaheadWrapper)(originalScope),
                         sources = options.sources,
                         //minimal no of characters that needs to be entered before typeahead kicks-in
                         minSearch = options.minSearch || 1,
                         //minimal wait time after last character typed before typehead kicks-in
-                        waitTime = options.waitTime || 0;
+                        waitTime = options.waitTime || 0,
+                        selection = options.multiple ? [] : undefined,
+                        i;
+
+                    var resetMatches = function () {
+                        scope.master.query = undefined;
+                        $setModelValue(originalScope, '');
+                    };
 
                     // Setup scope for proper prototypical inheritance
                     scope.master = {};
@@ -135,29 +142,19 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                     // TODO: Write this method
                     scope.select = function (item) {
-                        //called from within the $digest() cycle
-                        var locals = {};
-                        var model, item;
-
-                        if (options.multiple) {
-
+                        if (options.multiple){
+                            //if(item.$selected){return;}
+                            //item.$selected = true;
+                            selection.push(item);
+                            element[0].focus();
                         } else {
-                            //locals[parserResult.itemName] = item = scope.matches[activeIdx].model;
-                            //model = parserResult.modelMapper(originalScope, locals);
-                            model = item
+                            selection = item;
+                            resetMatches();
                         }
-                        $setModelValue(originalScope, model);
-
-//                        onSelectCallback(originalScope, {
-//                            $item: item,
-//                            $model: model,
-//                            $label: parserResult.viewMapper(originalScope, locals)
-//                        });
-
-                        //return focus to the input element if a mach was selected via a mouse click event
-                        //resetMatches();
-                        element[0].focus();
+                        $setSelectionValue(originalScope, selection);
                     };
+
+
 
                     // Set the current tab so we know where we are. Change selected index to -1 when changing tabs.
                     scope.currentTab = function (idx, source) {
@@ -203,7 +200,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                     $document.bind('click', function (e) {
                         if($.contains(document.getElementsByClassName('megatypeahead')[0], e.target )){ return; }
-                        //resetMatches();
+                        resetMatches();
                         scope.$digest();
                     });
 
