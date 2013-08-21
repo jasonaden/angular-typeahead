@@ -1,15 +1,261 @@
 <style type="text/css">
-    li.active > a {
-        background-color: gray;
-    }
+
+html, body {
+    margin: 1em;
+    padding: 0;
+    font: normal 400 100.01%/1em Helvetica,Arial,"Lucida Grande",sans-serif;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.megatypeahead .input-label {
+    font-weight: 500;
+    font-size: 12px;
+    color: #585858;
+    margin-right: 100px;
+}
+
+/* App styles, use from here to the end of the file */
+.megatypeahead {
+    width: 1200px;
+    position:absolute;
+    left:0;
+}
+
+.ta-search:before {
+    content: "";
+    position: absolute;
+    margin: 33px 0 0 100px;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 10px solid #fff;
+    -webkit-filter: drop-shadow(0px -2px 2px #dddddd);
+}
+.megatypeahead .results-wrapper {
+    height: 300px;
+    max-width: 1200px;
+    border: 1px solid #CFCFCF;
+    border-radius: 5px 5px 2px 2px;
+    box-shadow: 0 0 5px #ccc;
+}
+.megatypeahead .results-header {
+    /* Use the mixin when moved to dev */
+    background: #ffffff;
+    background: -moz-linear-gradient(top, white 0%, #f1f1f1 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #f1f1f1));
+    background: -webkit-linear-gradient(top, white 0%, #f1f1f1 100%);
+    background: -o-linear-gradient(top, white 0%, #f1f1f1 100%);
+    background: -ms-linear-gradient(top, white 0%, #f1f1f1 100%);
+    background: linear-gradient(to bottom, #ffffff 0%, #f1f1f1 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f1f1f1',GradientType=0 );
+    /* Mixin
+    background-color: #ffffff;
+    @include filter-gradient(#ffffff, #f1f1f1, vertical);
+    @include background-image(linear-gradient(top,  #ffffff 0%,#f1f1f1 100%));
+    */
+}
+.megatypeahead .results-header ul.tabs {
+    margin-top: 8px;
+    padding-left: 8px;
+    border-bottom: 1px solid #CFCFCF;
+    height: 21px;
+}
+.megatypeahead .results-header ul.tabs li {
+    float: left;
+    margin-right: 2px;
+    width: 80px;
+    background: #E6E6E6;
+    color: #585858;
+    text-align: center;
+    font-weight: 500;
+    font-size: 11px;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #CFCFCF;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    line-height: 20px;
+}
+.megatypeahead .results-header ul.tabs li:hover {
+    background: #f3f3f3;
+}
+.megatypeahead .results-header ul.tabs li a {
+    color: #585858;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 500;
+    font-size: 11px;
+}
+.megatypeahead .results-header ul.tabs li a.all {
+    color: #0193CF;
+    text-decoration: underline;
+}
+.megatypeahead .results-header ul.tabs li.active {
+    background: #fff;
+    border: 1px solid #CFCFCF;
+    border-bottom: 1px solid transparent;
+}
+.megatypeahead .results-header ul.tabs li.disabled {
+    color: #999;
+    cursor: default;
+}
+.megatypeahead .results-header .mega-pager {
+    margin: 0;
+    height:20px;
+}
+.megatypeahead .results-header .mega-pager .pager-arrow {
+    background: #ccc;
+}
+.megatypeahead .results-header .mega-pager .pager-arrow a {
+    color: #999;
+}
+.megatypeahead .results-header .mega-pager li {
+    float:left;
+    margin-right:2px;
+    cursor: pointer;
+}
+.megatypeahead .results-header .mega-pager a {
+    padding: 4px;
+    color: #666;
+}
+.megatypeahead .results-header ul.tabs li.disabled:hover {
+    background: #E6E6E6;
+}
+.megatypeahead .results-content > div {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 0;
+    -moz-column-gap: 0;
+    column-gap: 0;
+    height:260px;
+}
+.megatypeahead .results-content .divide {
+    width: 600px;
+}
+.megatypeahead .results-content ul.results {
+    display: block;
+}
+.megatypeahead .results-content ul.results.numbered {
+    counter-reset: number;
+}
+.megatypeahead .results-content ul.results.numbered li > div:first-of-type:before {
+    color: #ccc;
+    content: "" counter(number) ". ";
+    counter-increment: number;
+}
+.megatypeahead .results-content ul.results li {
+    width: 600px;
+    float: left;
+}
+.megatypeahead .results-content ul.results li a {
+    color: #585858;
+}
+/*.megatypeahead .results-content ul.results li:hover, */.megatypeahead .results-content ul.results li.active {
+    background: #0193CF !important;
+}
+.megatypeahead .results-content ul.results li:hover span {
+    color: #fff;
+}
+.megatypeahead .results-content ul.results li:hover a {
+    color: #fff;
+}
+.megatypeahead .results-content ul.results li:hover a.test, .megatypeahead .results-content ul.results li:hover a.controls, .megatypeahead .results-content ul.results li:hover a.list {
+    display: block;
+}
+.megatypeahead .results-content ul.results li:hover > div {
+    color: #fff;
+    background: #0193CF;
+}
+.megatypeahead .results-content ul.results li:hover > div:nth-of-type(2), .megatypeahead .results-content ul.results li:hover > div:nth-of-type(2) div {
+    color: #fff;
+    background: #0193CF;
+    border-color: transparent;
+}
+.megatypeahead .results-content ul.results li div {
+    float: left;
+    padding: 0 0 0 10px;
+    font-size: 11px;
+    color: #565656;
+}
+.megatypeahead .results-content ul.results li div:nth-of-type(even) {
+    background: #FAFAFA;
+    border-right: 1px solid #F1F1F1;
+    border-left: 1px solid #F1F1F1;
+}
+.megatypeahead .results-content ul.results li div span {
+    color: red;
+    font-weight: 700;
+}
+.megatypeahead .results-content ul.results li div a.test, .megatypeahead .results-content ul.results li div a.controls, .megatypeahead .results-content ul.results li div a.list {
+    float: right;
+    display: inline-block;
+    margin: 0 2px;
+    display: none;
+}
+.megatypeahead .results-content ul.results li div a.list {
+    width: 10px;
+    height: 20px;
+    background: url("https://dl.dropboxusercontent.com/u/1621719/Demos/CodePen/Typeahead/list.gif");
+}
+.megatypeahead .results-content ul.results li > div:nth-of-type(1), .megatypeahead .results-content ul.results li > div:nth-of-type(2) {
+    width: 288px;
+}
+.megatypeahead .results-content ul.results li .divide-3 {
+    width: 288px;
+    padding-top: 0;
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    column-count: 3;
+    -webkit-column-gap: 30px;
+    -moz-column-gap: 30px;
+    column-gap: 30px;
+}
+.megatypeahead .results-content ul.results li .divide-3 div {
+    padding: 0;
+    max-width: 90px;
+    border-color: transparent;
+}
+.megatypeahead .results-content ul.results li .divide-3 div:nth-of-type(2) {
+    white-space: nowrap;
+    min-width: 80px;
+}
+.megatypeahead .results-content ul.results li.heading .divide-3 div {
+    padding-top: 0;
+}
+.megatypeahead .results-content ul.results li.heading:hover {
+    background: #FFF !important;
+}
+.megatypeahead .results-content ul.results li.heading:hover > div, .megatypeahead .results-content ul.results li.heading:hover .divide-3 div {
+    color: #999;
+    background: #FFF;
+}
+.megatypeahead .results-content ul.results li.heading:hover > div:nth-of-type(even) {
+    background: #FAFAFA;
+    border-color: #F1F1F1;
+}
+.megatypeahead .results-content ul.results li.heading div {
+    color: #999;
+    padding-top: 10px;
+}
+.megatypeahead .results-content ul.results li.heading div:hover {
+    background: #fff !important;
+}
+.megatypeahead .results-content ul.results li.heading div:nth-of-type(even):hover {
+    background: #FAFAFA !important;
+}
 </style>
 
 <div class='container-fluid' ng-controller="MainCtrl">
-    <div class="hero-unit">
+    <div class="well">
         <h1>Mega Typeahead</h1>
         <br/>
-        <pre>Model: {{selected | json}}</pre>
-        <input type="text" ng-model="selected" data-typeahead="state for state in states | filter:$viewValue | limitTo:20">
+        <!--<pre>Model: {{selected | json}}</pre>
+        <input type="text" ng-model="selected" data-typeahead="state for state in states | filter:$viewValue | limitTo:20">-->
         <pre>Model: {{selected | json}}</pre>
         <input type="text" ng-model="selected2" data-mega-typeahead-wrapper="typeaheadConfig" data-mega-typeahead-selection="selected">
     </div>

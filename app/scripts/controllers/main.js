@@ -27,7 +27,8 @@ angular.module('megatypeaheadApp')
                 {
                     tabName: 'New Cities',
                     data: cities,
-                    templateUrl: "'views/city-match.html'",
+                    headerTemplateUrl: "'views/city-header.html'",
+                    matchTemplateUrl: "'views/city-match.html'",
                     //controller: 'CitiesTabController',
                     controller: function ($scope) {
                         $scope.clickedIt = function (data) {
@@ -37,7 +38,7 @@ angular.module('megatypeaheadApp')
                             console.log(type + ': ' + data);
                         }
                     },
-                    limit: 7,
+                    limit: 15,
                     source: 'suggestion for suggestion in newCities($viewValue, limit, offset)'
                 },
                 {

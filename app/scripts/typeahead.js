@@ -82,7 +82,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     var popUpEl = angular.element('<div data-mega-typeahead-popup></div>'),
                         updateSearch = function (inputValue) {
 
-                            scope.master.activeIdx = 0;
+                            scope.master.currentSource.activeIdx = -1;
                             scope.master.query = inputValue;
                             //position pop-up with matches - we need to re-calculate its position each time we are opening a window
                             //with matches as a pop-up might be absolute-positioned and position of an input might have changed on a page
@@ -140,30 +140,6 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 //                        }
 //                    });
 
-                    // TODO: Write this method
-                    scope.select = function (item) {
-                        if (options.multiple){
-                            //if(item.$selected){return;}
-                            //item.$selected = true;
-                            selection.push(item);
-                            element[0].focus();
-                        } else {
-                            selection = item;
-                            resetMatches();
-                        }
-                        $setSelectionValue(originalScope, selection);
-                    };
-
-
-
-                    // Set the current tab so we know where we are. Change selected index to -1 when changing tabs.
-                    scope.currentTab = function (idx, source) {
-                        scope.master.tab = idx || 0;
-                        scope.master.activeIdx = -1;
-                        scope.master.currentSource = source;
-                        element[0].focus();
-                    }
-
                     // TODO: Rework this to deal with tabs
                     //bind keyboard events: arrows up(38) / down(40), enter(13) and tab(9), esc(27)
                     element.bind('keydown', function (evt) {
@@ -178,16 +154,16 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                         // TODO: WORK IN WRAPPING AROUND AFTER DOING PAGING
                         if (evt.which === 40) {
-                            scope.master.activeIdx = (scope.master.activeIdx + 1);
+                            scope.master.currentSource.activeIdx = (scope.master.currentSource.activeIdx + 1);
                             scope.$digest();
 
                         } else if (evt.which === 38) {
-                            scope.master.activeIdx = (scope.master.activeIdx >= 0 ? scope.master.activeIdx : 0) - 1;
+                            scope.master.currentSource.activeIdx = (scope.master.currentSource.activeIdx >= 0 ? scope.master.currentSource.activeIdx : 0) - 1;
                             scope.$digest();
 
                         } else if (evt.which === 13 || evt.which === 9) {
                             scope.$apply(function () {
-                                scope.select(scope.master.activeIdx);
+                                scope.select(scope.master.currentSource.activeIdx);
                             });
 
                         } else if (evt.which === 27) {
@@ -197,6 +173,32 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                             scope.$digest();
                         }
                     });
+                    // TODO: Write this method
+                    scope.select = function (idx) {
+                        if (options.multiple){
+                            selection.push(scope.master.matches[scope.master.currentSource.tabName][idx]);
+                            element[0].focus();
+                        } else {
+                            selection = scope.master.matches[scope.master.currentSource.tabName][idx];
+                            resetMatches();
+                        }
+                        $setSelectionValue(originalScope, selection);
+                    };
+
+
+
+                    // Set the current tab so we know where we are. Change selected index to -1 when changing tabs.
+                    scope.currentTab = function (idx, source) {
+                        scope.master.currentSource.active = false;
+                        source.active = true;
+                        scope.master.tab = idx || 0;
+                        scope.master.activeIdx = -1;
+                        scope.master.currentSource = source;
+                        scope.master.currentSource.activeIdx = -1;
+                        element[0].focus();
+                    }
+
+
 
                     $document.bind('click', function (e) {
                         if($.contains(document.getElementsByClassName('megatypeahead')[0], e.target )){ return; }
@@ -205,19 +207,20 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     });
 
                     element.after($compile(popUpEl)(scope));
+                    scope.master.currentSource = sources[0];
+                    scope.master.matches = {};
+                    sources[0].active = true;
                 }
             }
         }])
 
     .directive('megaTypeaheadPane', ['$compile', '$parse', '$q', '$timeout', '$document', '$position', 'megaTypeaheadParser',
         function ($compile, $parse, $q, $timeout, $document, $position, megaTypeaheadParser) {
-
         return {
             scope: true,
             link: function (scope, element, attrs) {
 
                 //SUPPORTED ATTRIBUTES (OPTIONS)
-
                 //should it restrict model values to the ones selected from the popup only?
                 var isEditable = scope.$eval(attrs.typeaheadEditable) !== false;
 
@@ -233,14 +236,16 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     popUpEl.attr('template-url', attrs.typeaheadTemplateUrl);
                 }
 
+                var tabName = $parse(attrs.megaTypeaheadTab)(scope);
                 var resetMatches = function () {
-                    scope.matches = [];
-                    scope.master.activeIdx = -1;
+                    scope.master.matches[tabName] = [];
+                    scope.activeIdx = -1;
                 };
+
 
                 var getMatchesAsync = function (inputValue) {
 
-                    var locals = {$viewValue: inputValue, limit: scope.master.currentSource.limit, offset: scope.master.currentSource.offset};
+                    var locals = {$viewValue: inputValue, limit: scope.master.currentSource.limit || 20, offset: scope.master.currentSource.offset || 0};
                     isLoadingSetter(scope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
 
@@ -249,13 +254,13 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         if (inputValue === scope.master.query) {
                             if (matches.length > 0) {
 
-                                scope.master.activeIdx = 0;
-                                scope.matches.length = 0;
+                                scope.master.currentSource.activeIdx = -1;
+                                scope.matches = scope.master.matches[tabName] = [];
 
                                 //transform labels
                                 for (var i = 0; i < matches.length; i++) {
                                     locals[parserResult.itemName] = matches[i];
-                                    scope.matches.push({
+                                    scope.master.matches[tabName].push({
                                         data: parserResult.viewMapper(scope, locals),
                                         model: matches[i]
                                     });
@@ -271,14 +276,15 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     });
                 };
 
-                resetMatches();
-                scope.$watch('source.offset', function (val) {
+                //resetMatches();
+                scope.$watch('source.offset', function (val, prev) {
+                    if(val === prev){ return; }
                     getMatchesAsync(scope.master.query)
                 });
 
                 //bind keyboard events: arrows up(38) / down(40), enter(13) and tab(9), esc(27)
-                scope.$watch('master.query', function (val) {
-
+                scope.$watch('master.query', function (val, prev) {
+                    if(val === prev){ return; }
                     resetMatches();
                     if (val && val.length) {
                         getMatchesAsync(val);
@@ -305,32 +311,43 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 };
 
                 scope.isActive = function (matchIdx) {
-                    return scope.master.activeIdx == matchIdx;
+                    return scope.master.currentSource.activeIdx == matchIdx;
                 };
 
                 scope.selectActive = function (matchIdx) {
-                    scope.master.activeIdx = matchIdx;
+                    scope.master.currentSource.activeIdx = matchIdx;
                 };
 
-                scope.selectMatch = function (match) {
-                    scope.select({item: match});
+                scope.selectMatch = function (matchIdx) {
+                    scope.select(matchIdx);
                 };
             }
         };
     })
     .directive('megaTypeaheadMatch', ['$http', '$templateCache', '$compile', '$parse', function ($http, $templateCache, $compile, $parse) {
         return {
-            restrict: 'E',
+            restrict: 'A',
             scope: true,
             link: function (scope, element, attrs) {
-                var tplUrl = $parse(scope.source.templateUrl)(scope) || 'views/typeahead-match.html';
+                var tplUrl = $parse(scope.source.matchTemplateUrl)(scope) || 'views/typeahead-match.html';
                 $http.get(tplUrl, {cache: $templateCache}).success(function (tplContent) {
                     element.replaceWith($compile(tplContent.trim())(scope));
                 });
             }
         };
     }])
-
+    .directive('megaTypeaheadHeader', ['$http', '$templateCache', '$compile', '$parse', function ($http, $templateCache, $compile, $parse) {
+        return {
+            restrict: 'A',
+            scope: true,
+            link: function (scope, element, attrs) {
+                var tplUrl = $parse(scope.source.headerTemplateUrl)(scope) || 'views/typeahead-header.html';
+                $http.get(tplUrl, {cache: $templateCache}).success(function (tplContent) {
+                    element.replaceWith($compile(tplContent.trim())(scope));
+                });
+            }
+        };
+    }])
     .filter('megaTypeaheadHighlight', function () {
 
         function escapeRegexp(queryToEscape) {
