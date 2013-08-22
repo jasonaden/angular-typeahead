@@ -55,10 +55,12 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         selection = options.multiple ? [] : undefined,
                         i;
 
-                    var resetMatches = function () {
-                        scope.master.query = undefined;
-                        $setModelValue(originalScope, '');
-                    };
+
+                    angular.forEach(sources, function (source, idx) {
+                        source.controller = source.controller || angular.noop;
+                        source.limit = source.limit || 20;
+                        source.offset = source.offset || 0;
+                    });
 
                     // Setup scope for proper prototypical inheritance
                     scope.master = {};
@@ -71,13 +73,16 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         select: 'select(activeIdx)'
                     });
 
-                    // Default to empty controller constructor
-                    angular.forEach(sources, function (source, idx) {
-                        source.controller = source.controller || angular.noop;
-                        source.limit = source.limit || 5;
-                        source.offset = source.offset || 0;
-                    });
+                    var resetMatches = function () {
+                        scope.master.query = undefined;
+                        angular.forEach(sources, function (source, idx) {
+                            source.matches = [];
+                            source.pageCount = undefined;
+                            source.offset = 0;
+                        });
 
+                        $setModelValue(originalScope, '');
+                    };
                     //pop-up element used to display matches
                     var popUpEl = angular.element('<div data-mega-typeahead-popup></div>'),
                         updateSearch = function (inputValue) {
@@ -176,16 +181,22 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     // TODO: Write this method
                     scope.select = function (idx) {
                         if (options.multiple){
-                            selection.push(scope.master.matches[scope.master.currentSource.tabName][idx]);
+                            selection.push(scope.master.currentSource.matches[idx]);
                             element[0].focus();
                         } else {
-                            selection = scope.master.matches[scope.master.currentSource.tabName][idx];
+                            selection = scope.master.currentSource.matches[idx];
                             resetMatches();
                         }
                         $setSelectionValue(originalScope, selection);
                     };
 
+                    scope.pageNext = function(){
+                        scope.master.currentSource.offset = scope.master.currentSource.offset + 1
+                    };
 
+                    scope.pagePrev = function(){
+                        scope.master.currentSource.offset = scope.master.currentSource.offset - 1
+                    };
 
                     // Set the current tab so we know where we are. Change selected index to -1 when changing tabs.
                     scope.currentTab = function (idx, source) {
@@ -196,7 +207,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         scope.master.currentSource = source;
                         scope.master.currentSource.activeIdx = -1;
                         element[0].focus();
-                    }
+                    };
 
 
 
@@ -208,7 +219,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                     element.after($compile(popUpEl)(scope));
                     scope.master.currentSource = sources[0];
-                    scope.master.matches = {};
+                    //scope.master.matches = {};
                     sources[0].active = true;
                 }
             }
@@ -229,23 +240,24 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                 //INTERNAL VARIABLES
                 //expressions used by typeahead
-                var parserResult = megaTypeaheadParser.parse($parse(attrs.megaTypeaheadPane)(scope));
-
+                scope.source = $parse(attrs.megaTypeaheadPane)(scope);
+                var parserResult = megaTypeaheadParser.parse(scope.source.source);
                 //custom item template
                 if (angular.isDefined(attrs.typeaheadTemplateUrl)) {
                     popUpEl.attr('template-url', attrs.typeaheadTemplateUrl);
                 }
 
-                var tabName = $parse(attrs.megaTypeaheadTab)(scope);
+                var tabName = scope.source.tabName;
                 var resetMatches = function () {
-                    scope.master.matches[tabName] = [];
+                    scope.source.matches = [];
+                    //scope.master.matches[tabName] = [];
                     scope.activeIdx = -1;
                 };
 
 
                 var getMatchesAsync = function (inputValue) {
 
-                    var locals = {$viewValue: inputValue, limit: scope.master.currentSource.limit || 20, offset: scope.master.currentSource.offset || 0};
+                    var locals = {$viewValue: inputValue, limit: scope.source.limit || 20, offset: scope.source.offset || 0};
                     isLoadingSetter(scope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
 
@@ -254,17 +266,21 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         if (inputValue === scope.master.query) {
                             if (matches.length > 0) {
 
-                                scope.master.currentSource.activeIdx = -1;
-                                scope.matches = scope.master.matches[tabName] = [];
+                                scope.source.activeIdx = -1;
+                                scope.source.matches = [];
 
                                 //transform labels
                                 for (var i = 0; i < matches.length; i++) {
                                     locals[parserResult.itemName] = matches[i];
-                                    scope.master.matches[tabName].push({
+                                    scope.source.matches.push({
                                         data: parserResult.viewMapper(scope, locals),
                                         model: matches[i]
                                     });
                                 }
+                                scope.source.matching_items = matches.matching_items;
+                                scope.source.pageCount = Math.ceil(matches.matching_items / scope.source.limit);
+                                //scope.master.matches[tabName].matching_items = matches.matching_items;
+                                //scope.master.matches[tabName].pageCount = Math.ceil(matches.matching_items / locals.limit);
                             } else {
                                 resetMatches();
                             }
@@ -356,5 +372,13 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
         return function (matchItem, query) {
             return query ? matchItem.replace(new RegExp(escapeRegexp(query), 'gi'), '<strong>$&</strong>') : query;
+        };
+    })
+    .filter('pages', function() {
+        return function(input, total) {
+            total = parseInt(total);
+            for (var i=0; i<total; i++)
+                input.push(i);
+            return input;
         };
     });

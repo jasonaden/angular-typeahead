@@ -15,7 +15,9 @@ angular.module('megatypeaheadApp')
         };
         $scope.newCities = function(cityName, limit, offset) {
             return $http.jsonp("http://localhost:3000/search?callback=JSON_CALLBACK&limit="+limit+"&offset="+offset+"&q="+cityName).then(function(response){
-                return $filter('limitTo')(response.data, 150);
+                var results = $filter('limitTo')(response.data.results, limit);
+                results.matching_items = response.data.matching_items;
+                return results;
             });
         };
 
@@ -24,6 +26,23 @@ angular.module('megatypeaheadApp')
             waitTime: 0,
             multiple: true,
             sources: [
+                {
+                    tabName: 'States-Cities',
+                    data: cities,
+                    headerTemplateUrl: "'views/city-header.html'",
+                    matchTemplateUrl: "'views/city-match.html'",
+                    //controller: 'CitiesTabController',
+                    controller: function ($scope) {
+                        $scope.clickedIt = function (data) {
+                            alert(data);
+                        }
+                        $scope.selectItem = function (type, data) {
+                            console.log(type + ': ' + data);
+                        }
+                    },
+                    limit: 20,
+                    source: 'suggestion for suggestion in newCities($viewValue, limit, offset)'
+                },
                 {
                     tabName: 'New Cities',
                     data: cities,
@@ -38,7 +57,25 @@ angular.module('megatypeaheadApp')
                             console.log(type + ': ' + data);
                         }
                     },
-                    limit: 15,
+                    limit: 20,
+                    source: 'suggestion for suggestion in newCities($viewValue, limit, offset)'
+                },
+
+                {
+                    tabName: 'Test',
+                    data: cities,
+                    headerTemplateUrl: "'views/city-header.html'",
+                    matchTemplateUrl: "'views/city-match.html'",
+                    //controller: 'CitiesTabController',
+                    controller: function ($scope) {
+                        $scope.clickedIt = function (data) {
+                            alert(data);
+                        }
+                        $scope.selectItem = function (type, data) {
+                            console.log(type + ': ' + data);
+                        }
+                    },
+                    limit: 20,
                     source: 'suggestion for suggestion in newCities($viewValue, limit, offset)'
                 },
                 {

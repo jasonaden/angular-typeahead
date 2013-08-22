@@ -3,15 +3,11 @@
     <div class="results-wrapper">
         <div class="arrow-up"></div>
         <div class="results-header">
-            <div class="mega-pager pull-right">
+            <div class="mega-pager pull-right" data-ng-show="master.currentSource.pageCount>1">
                 <ul>
-                    <li class="pager-arrow"><a data-ng-click="master.currentSource.offset = master.currentSource.offset - 1">&lt;</a></li>
-                    <li class="pager-arrow"><a data-ng-click="master.currentSource.offset = master.currentSource.offset + 1">&gt;</a></li>
-                    <li data-ng-class="{active: master.currentSource.offset == 0}"><a data-ng-click="master.currentSource.offset = 0">1</a></li>
-                    <li data-ng-class="{active: master.currentSource.offset == 1}"><a data-ng-click="master.currentSource.offset = 1">2</a></li>
-                    <li data-ng-class="{active: master.currentSource.offset == 2}"><a data-ng-click="master.currentSource.offset = 2">3</a></li>
-                    <li data-ng-class="{active: master.currentSource.offset == 3}"><a data-ng-click="master.currentSource.offset = 3">4</a></li>
-                    <li data-ng-class="{active: master.currentSource.offset == 4}"><a data-ng-click="master.currentSource.offset = 4">5</a></li>
+                    <li class="pager-arrow"><a data-ng-click="pagePrev()">&lt;</a></li>
+                    <li class="pager-arrow"><a data-ng-click="pageNext()">&gt;</a></li>
+                    <li data-ng-class="{active: master.currentSource.offset == $index}" data-ng-repeat="n in [] | pages:master.currentSource.pageCount"><a data-ng-click="master.currentSource.offset=$index">{{$index +1}}</a></li>
                 </ul>
             </div>
             <ul class="tabs">
@@ -19,7 +15,9 @@
             </ul>
         </div>
         <div class="results-content">
-            <div data-ng-repeat="source in master.sources" mega-typeahead-pane="source.source" mega-typeahead-tab="source.tabName" ng-controller="source.controller" data-ng-show="source.active">
+            <!--<div data-ng-repeat="source in master.sources" mega-typeahead-pane="source.source" mega-typeahead-tab="source.tabName" ng-controller="source.controller" data-ng-show="source.active">-->
+
+            <div data-ng-repeat="source in master.sources" mega-typeahead-pane="source" data-ng-show="source.active">
                 <div class="divide">
                     <ul class="results">
                         <li class="heading">
@@ -27,7 +25,7 @@
                         </li>
                     </ul>
                     <ul class="results numbered">
-                        <li ng-repeat="match in matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)">
+                        <li ng-repeat="match in source.matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)">
                             <div data-mega-typeahead-match index="$index" match="match" query="query" template-url="matchTemplateUrl"></div>
                         </li>
                     </ul>
