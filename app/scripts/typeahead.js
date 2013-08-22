@@ -64,6 +64,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                     // Setup scope for proper prototypical inheritance
                     scope.master = {};
+                    console.log(sources);
                     angular.extend(scope.master, {
                         query: undefined,
                         sources: sources,
@@ -179,12 +180,20 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         }
                     });
                     // TODO: Write this method
-                    scope.select = function (idx) {
+                    scope.select = function (idx, match) {
                         if (options.multiple){
-                            selection.push(scope.master.currentSource.matches[idx]);
+                            if(match) {
+                                selection.push(match);
+                            } else {
+                                selection.push(scope.master.currentSource.matches[idx]);
+                            }
                             element[0].focus();
                         } else {
-                            selection = scope.master.currentSource.matches[idx];
+                            if(match) {
+                                selection = match
+                            } else {
+                                selection = scope.master.currentSource.matches[idx];
+                            }
                             resetMatches();
                         }
                         $setSelectionValue(originalScope, selection);
@@ -225,8 +234,8 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
             }
         }])
 
-    .directive('megaTypeaheadPane', ['$compile', '$parse', '$q', '$timeout', '$document', '$position', 'megaTypeaheadParser',
-        function ($compile, $parse, $q, $timeout, $document, $position, megaTypeaheadParser) {
+    .directive('megaTypeaheadPane', ['$compile', '$parse', '$q', '$timeout', '$document', '$position', '$http', '$templateCache', 'megaTypeaheadParser',
+        function ($compile, $parse, $q, $timeout, $document, $position, $http, $templateCache, megaTypeaheadParser) {
         return {
             scope: true,
             link: function (scope, element, attrs) {
@@ -241,7 +250,11 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 //INTERNAL VARIABLES
                 //expressions used by typeahead
                 scope.source = $parse(attrs.megaTypeaheadPane)(scope);
-                var parserResult = megaTypeaheadParser.parse(scope.source.source);
+
+                var parserResult;
+                if(scope.source.source) {
+                    parserResult = megaTypeaheadParser.parse(scope.source.source);
+                }
                 //custom item template
                 if (angular.isDefined(attrs.typeaheadTemplateUrl)) {
                     popUpEl.attr('template-url', attrs.typeaheadTemplateUrl);
@@ -257,6 +270,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                 var getMatchesAsync = function (inputValue) {
 
+                    if(!parserResult) return;
                     var locals = {$viewValue: inputValue, limit: scope.source.limit || 20, offset: scope.source.offset || 0};
                     isLoadingSetter(scope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
@@ -308,7 +322,11 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     return undefined;
                 });
 
-                /*element.after($compile(popUpEl)(scope));*/
+                var tplUrl = $parse(scope.source.paneUrl)(scope) || 'views/typeahead-pane.html';
+                $http.get(tplUrl, {cache: $templateCache}).success(function (tplContent) {
+                    element.append($compile(tplContent.trim())(scope));
+                });
+                //element.after($compile(popUpEl)(scope));
             }
         };
 
@@ -330,12 +348,34 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     return scope.master.currentSource.activeIdx == matchIdx;
                 };
 
-                scope.selectActive = function (matchIdx) {
-                    scope.master.currentSource.activeIdx = matchIdx;
+                scope.isActiveAllTab = function (matchIdx, parentIdx, sources) {
+                    var cnt = -1;
+                    parentIdx = parentIdx + 1;
+                    for(var i = 1 ; i < sources.length ; i++) {
+                        var source = sources[i];
+                        for(var j = 0 ; j < source.matches.length ; j++) {
+                            if (j > 4) {
+                                break;
+                            }
+                            cnt++;
+                            if (scope.master.currentSource.activeIdx === cnt) {
+                                if (i === parentIdx && matchIdx === j)
+                                    return true;
+                            }
+
+
+                        }
+                    }
+                    return false;
                 };
 
-                scope.selectMatch = function (matchIdx) {
-                    scope.select(matchIdx);
+                scope.selectActive = function (matchIdx, source) {
+                    if(source)
+                        source.activeIdx = matchIdx;
+                };
+
+                scope.selectMatch = function (matchIdx, match) {
+                    scope.select(matchIdx, match);
                 };
             }
         };
@@ -377,8 +417,20 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
     .filter('pages', function() {
         return function(input, total) {
             total = parseInt(total);
-            for (var i=0; i<total; i++)
-                input.push(i);
-            return input;
+
+            if(total > 6) {
+                for (var i=1; i<=3; i++)
+                    input.push(i);
+
+                input.push('...');
+
+                for (var i=total - 2; i<=total; i++)
+                    input.push(i);
+                return input;
+            } else {
+                for (var i=0; i<total; i++)
+                    input.push(i);
+                return input;
+            }
         };
     });

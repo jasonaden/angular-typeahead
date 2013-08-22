@@ -27,6 +27,9 @@ angular.module('megatypeaheadApp')
             multiple: true,
             sources: [
                 {
+                    tabName: 'All',
+                    paneUrl: "'views/all-pane.html'"
+                },{
                     tabName: 'States-Cities',
                     data: cities,
                     headerTemplateUrl: "'views/city-header.html'",
@@ -81,6 +84,7 @@ angular.module('megatypeaheadApp')
                 {
                     tabName: 'Cities',
                     data: cities,
+                    headerTemplateUrl: "'views/city-header.html'",
                     templateUrl: "'views/city-match.html'",
                     //controller: 'CitiesTabController',
                     controller: function ($scope) {
@@ -96,6 +100,7 @@ angular.module('megatypeaheadApp')
                 {
                     tabName: 'States',
                     data: states,
+                    headerTemplateUrl: "'views/city-header.html'",
                     source: 'state for state in source.data | limitTo:20'
                 }
             ]
