@@ -7,7 +7,7 @@
                 <ul>
                     <li class="pager-arrow"><a data-ng-click="pagePrev()">&lt;</a></li>
                     <li class="pager-arrow"><a data-ng-click="pageNext()">&gt;</a></li>
-                    <li data-ng-class="{active: master.currentSource.offset == $index}" data-ng-repeat="n in [] | pages:master.currentSource.pageCount"><a data-ng-click="master.currentSource.offset=n - 1">{{n}}</a></li>
+                    <li data-ng-class="{active: master.currentSource.offset %5 == $index}" data-ng-repeat="n in [] | pages:{total:master.currentSource.pageCount,offset:master.currentSource.offset}"><a data-ng-click="master.currentSource.offset=n">{{n+1}}</a></li>
                 </ul>
             </div>
             <ul class="tabs">

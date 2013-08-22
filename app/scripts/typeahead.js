@@ -64,7 +64,6 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                     // Setup scope for proper prototypical inheritance
                     scope.master = {};
-                    console.log(sources);
                     angular.extend(scope.master, {
                         query: undefined,
                         sources: sources,
@@ -415,22 +414,17 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
         };
     })
     .filter('pages', function() {
-        return function(input, total) {
-            total = parseInt(total);
+        return function(input, params) {
+            var total = params.total,
+                offset = params.offset,
+                start = Math.floor(offset/5) * 5,
+                end = total-start > 5 ? start+5 : total,
+                i;
 
-            if(total > 6) {
-                for (var i=1; i<=3; i++)
-                    input.push(i);
-
-                input.push('...');
-
-                for (var i=total - 2; i<=total; i++)
-                    input.push(i);
-                return input;
-            } else {
-                for (var i=0; i<total; i++)
-                    input.push(i);
-                return input;
+            for(i=start;i<end;i++){
+                input.push(i);
             }
+
+            return input;
         };
     });
