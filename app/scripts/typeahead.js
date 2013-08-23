@@ -184,9 +184,9 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     scope.select = function (idx, match) {
                         if (options.multiple){
                             if(match) {
-                                selection.push(match);
+                                selection.push(match.data);
                             } else {
-                                selection.push(scope.master.currentSource.matches[idx]);
+                                selection.push(scope.master.currentSource.matches[idx].data);
                             }
                             element[0].focus();
                         } else {

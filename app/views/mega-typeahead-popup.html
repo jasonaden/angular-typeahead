@@ -3,22 +3,23 @@
     <div class="results-wrapper">
         <div class="arrow-up"></div>
         <div class="results-header">
-            <div class="mega-pager pull-right" data-ng-show="master.currentSource.pageCount>1">
+            <ul class="tabs pull-left">
+                <li data-ng-class="{active:master.tab == -1}" data-ng-show="master.aggregateTab" data-ng-click="currentTab(-1, master.aggregateTab)"><a>{{ master.aggregateTab.tabName }}</a></li>
+                <li data-ng-repeat="source in master.sources" data-ng-class="{active:source.active, disabled: !source.matches.length}" data-ng-click="source.matches.length && currentTab($index, source)"><a>{{source.tabName}}</a></li>
+            </ul>
+            <div class="pagination pagination-mini pagination-right pull-right" data-ng-show="master.currentSource.pageCount>1">
                 <ul>
-                    <li class="pager-arrow"><a data-ng-click="pagePrev()">&lt;</a></li>
-                    <li class="pager-arrow"><a data-ng-click="pageNext()">&gt;</a></li>
+                    <li><a class="ic20 page-left disabled" data-ng-click="pagePrev()"></a></li>
+                    <li><a class="ic20 page-right" data-ng-click="pageNext()"></a></li>
                     <li data-ng-class="{active: master.currentSource.offset %5 == $index}" data-ng-repeat="n in [] | pages:{total:master.currentSource.pageCount,offset:master.currentSource.offset}"><a data-ng-click="master.currentSource.offset=n">{{n+1}}</a></li>
                 </ul>
             </div>
-            <ul class="tabs">
-                <li data-ng-class="{active:master.tab == -1}" data-ng-show="master.aggregateTab" data-ng-click="currentTab(-1, master.aggregateTab)">{{ master.aggregateTab.tabName }}</li>
-                <li data-ng-repeat="source in master.sources" data-ng-class="{active:source.active, disabled: !source.matches.length}" data-ng-click="source.matches.length && currentTab($index, source)">{{source.tabName}}</li>
-            </ul>
-        </div>
+            <br class="clear"/>
+        </div><!--/.results-header-->
         <div class="results-content">
             <!--<div data-ng-repeat="source in master.sources" mega-typeahead-pane="source.source" mega-typeahead-tab="source.tabName" ng-controller="source.controller" data-ng-show="source.active">-->
-            <div mega-typeahead-pane="master.aggregateTab" data-ng-show="master.tab == -1"></div>
-            <div data-ng-repeat="source in master.sources" mega-typeahead-pane="source" data-ng-show="source.active"></div>
+            <div class="divide" mega-typeahead-pane="master.aggregateTab" data-ng-show="master.tab == -1"></div>
+            <div class="divide" data-ng-repeat="source in master.sources" mega-typeahead-pane="source" data-ng-show="source.active"></div>
         </div>
     </div>
 </div>

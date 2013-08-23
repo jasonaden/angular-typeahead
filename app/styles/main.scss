@@ -1,32 +1,261 @@
-$iconSpritePath: "../images/glyphicons-halflings.png";
-$iconWhiteSpritePath: "../images/glyphicons-halflings-white.png";
 
-@import "bootstrap-sass/lib/bootstrap";
+/* Beginning of CodePen styles, remove for dev */
+html, body {margin:1em;padding:0;font:normal 400 100.01%/1em Helvetica,Arial,"Lucida Grande",sans-serif}
+ul {margin:0;padding:0;list-style:none}
+.clear {clear:both !important}
 
-/* Put your CSS here */
-html, body {
-  margin: 20px;
+#typeahead {
+  .input-label {font-weight:500;font-size:12px;color:#585858;margin-right:100px}
 }
 
-body {
-    background: #fafafa;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: #333;
+.ic20 {
+  display:inline-block;
+  background-image:url('https://dl.dropboxusercontent.com/u/1621719/Demos/CodePen/Typeahead/20_sprite.png');
+  vertical-align:middle;
+  width:20px;
+  height:20px;
+  label {display:block;width:300px;margin-left:30px;line-height:20px}
+}
+a.ic20,a.ic28 {display:block}
+/* Beginning of CodePen styles, remove for dev */
+
+
+/* App styles below. Use everything from here to the end of the file */
+$number-increment: 2,3,4,5,6,7;
+$numbers:20,30,40,60,80,100,120;
+
+@for $i from 1 through length($number-increment) {
+  .megatypeahead.page#{nth($number-increment, $i)} {
+    .numbered {
+      counter-reset: number nth($numbers, $i) !important;
+    }
+  }
 }
 
-.hero-unit {
-    margin: 50px auto 0 auto;
-    width: 300px;
-    font-size: 18px;
-    font-weight: 200;
-    line-height: 30px;
-    background-color: #eee;
-    border-radius: 6px;
-    padding: 60px;
+@mixin columns($count,$gap) {
+  -webkit-column-count:$count;
+  -moz-column-count:$count;
+  column-count:$count;
+  -webkit-column-gap:$gap;
+  -moz-column-gap:$gap;
+  column-gap:$gap;
+}
+@mixin column-fill($fill) {
+  -webkit-column-fill:$fill;
+  -moz-column-fill:$fill;
+  -ms-column-fill:$fill;
+  -o-column-fill:$fill;
+  column-fill:$fill;
+}
+@mixin drop-shadow($dropshadow) {
+  -webkit-filter:drop-shadow($dropshadow);
+  -moz-filter:drop-shadow($dropshadow);
+  -ms-filter:drop-shadow($dropshadow);
+  -o-filter:drop-shadow($dropshadow);
+  filter:drop-shadow($dropshadow);
+}
+@mixin box-shadow($shadow...) {
+  -webkit-box-shadow:$shadow;
+  -moz-box-shadow:$shadow;
+  box-shadow:$shadow;
+}
+@mixin border-radius($radius) {
+  -webkit-border-radius:$radius;
+  -moz-border-radius:$radius;
+  -ms-border-radius:$radius;
+  border-radius:$radius;
 }
 
-.hero-unit h1 {
-    font-size: 60px;
-    line-height: 1;
-    letter-spacing: -1px;
+// Give the input an arrow for the type ahead container
+.ta-search:before {
+  content:"";
+  position:absolute;
+  margin:33px 0 0 100px;
+  height:0;
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-bottom:10px solid #fff;
+  @include drop-shadow(0px -2px 2px #ddd);
+}
+
+.megatypeahead {
+  width:1200px;
+  position: absolute;
+  .results-wrapper {
+    height:300px;
+    max-width:1200px;
+    border:1px solid #CFCFCF;
+    @include border-radius(5px 5px 2px 2px);
+    @include box-shadow(0 0 5px #ccc);
+  }
+  .results-header {
+    /* Use the mixin when moved to dev */
+    border-bottom:1px solid #CFCFCF;
+    background: #ffffff;
+    background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f1f1f1));
+    background: -webkit-linear-gradient(top, #ffffff 0%,#f1f1f1 100%);
+    background: -o-linear-gradient(top, #ffffff 0%,#f1f1f1 100%);
+    background: -ms-linear-gradient(top, #ffffff 0%,#f1f1f1 100%);
+    background: linear-gradient(to bottom, #ffffff 0%,#f1f1f1 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f1f1f1',GradientType=0 );
+    /* Mixin
+    background-color: #ffffff;
+    @include filter-gradient(#ffffff, #f1f1f1, vertical);
+    @include background-image(linear-gradient(top,  #ffffff 0%,#f1f1f1 100%));
+    */
+    ul.tabs {
+      margin-top:8px;
+      padding-left:8px;
+
+      height:21px;
+      li {
+        float:left;
+        margin-right:2px;
+        a {
+          display:block;
+          width:80px;
+          background:#E6E6E6;
+          font-size:11px;
+          color:#585858;
+          text-align:center;
+          font-weight:500;
+          cursor:pointer;
+          text-decoration:none;
+          border:1px solid transparent;
+          border-bottom:1px solid #CFCFCF;
+          @include border-radius(4px 4px 0);
+          &:hover {color:#0193CF;background:#f3f3f3;text-decoration:underline}
+        }
+        &.active a {
+          background:#fff;
+          border:1px solid #CFCFCF;
+          border-bottom:1px solid transparent;
+        }
+        &.disabled {
+          color:#999;
+          cursor:default;
+          &:hover {background:#E6E6E6}
+        }
+      }
+    }
+    .pagination {
+      margin:5px 10px 0 0;
+      ul {
+        @include box-shadow(none);
+        li {
+          a {
+            background-color:transparent;
+            border:0;
+            color:#585858;
+            &:hover {color:#0193CF;text-decoration:underline}
+          }
+          &.active a {font-weight:700;color:#0193CF}
+        }
+      }
+      // Previous and next page buttons
+      .page-left {
+        background-position:-140px -260px;
+        background-color:#e4e4e4 !important;
+        height:9px;
+        width:5px;
+        padding:5px 7px !important;
+        margin-right:5px;
+        @include border-radius(3px);
+        &:hover {background-color:#ddd !important}
+        &.disabled {
+          background-position:-160px -260px;
+          background-color:#EFEFEF !important;
+          &:hover {background-color:#EFEFEF !important}
+        }
+      }
+      .page-right {
+        background-position:-180px -260px;
+        background-color:#e4e4e4 !important;
+        height:9px;
+        width:5px;
+        margin-right:5px;
+        padding:5px 7px !important;
+        @include border-radius(3px);
+        &:hover {background-color:#ddd !important}
+        &.disabled {
+          background-position:-200px -260px;
+          background-color:#EFEFEF !important;
+          &:hover {background-color:#EFEFEF !important}
+        }
+      }
+    }
+  }
+  .results-content {
+    @include columns(2,0);
+    @include column-fill(auto);
+    height:280px;
+    .divide {
+      width:600px;
+      height:250px;
+      &:nth-of-type(2){
+        height:auto !important;
+        overflow:hidden;
+      }
+    }
+    ul.results {
+      &.numbered {
+        // add number after property to increment from said number ex: counter-reset:number 20;
+        counter-reset:number;
+        li > div:first-of-type {
+          &:before {
+            color:#ccc;
+            content:"" counter(number) ". ";
+            counter-increment:number;
+          }
+        }
+      }
+      li {
+        width:100%;
+        a {color:#585858;}
+        &:hover {
+          background:#0193CF !important;
+          span {color:#fff}
+          a {color:#fff}
+          a.test,a.controls,a.list {display:block}
+        }
+        &:hover > div {color:#fff;background:#0193CF}
+        &:hover > div:nth-of-type(2), &:hover > div:nth-of-type(2) div {color:#fff;background:#0193CF;border-color:transparent}
+
+        div {
+          float:left;
+          padding:0 0 0 10px;
+          font-size:11px;
+          color:#565656;
+          &:nth-of-type(even) {background:#FAFAFA;border-right:1px solid #F1F1F1;border-left:1px solid #F1F1F1}
+          span {color:red;font-weight:700}
+          a.test,a.controls,a.list {float:right;display:inline-block;margin:0 2px;display:none}
+          a.list {width:10px;height:20px;background:url('https://dl.dropboxusercontent.com/u/1621719/Demos/CodePen/Typeahead/list.gif')}
+        }
+        > div:nth-of-type(1),> div:nth-of-type(2) {width:288px;}
+        .divide-3 {
+          width:278px;
+          display:inline-block;
+          padding-top:0;
+          @include columns(3,0);
+          div {padding:0;max-width:90px;border-color:transparent}
+          div:nth-of-type(1) {}
+          div:nth-of-type(2) {white-space:nowrap;min-width:80px}
+          div:nth-of-type(3) {}
+        }
+        &.heading {
+          .divide-3 div {padding-top:0}
+          &:hover {background:#FFF !important}
+          &:hover > div,&:hover .divide-3 div {color:#999;background:#FFF}
+          &:hover > div:nth-of-type(even) {background:#FAFAFA;border-color:#F1F1F1}
+          div {
+            color:#999;
+            padding-top:10px;
+            &:hover {background:#fff !important}
+            &:nth-of-type(even):hover {background:#FAFAFA !important}
+          }
+        }
+      }
+    }
+  }
 }

@@ -1,13 +1,11 @@
 
-<div class="divide">
-    <ul class="results">
-        <li class="heading">
-            <div data-mega-typeahead-header template-url="headerTemplateUrl"></div>
-        </li>
-    </ul>
-    <ul class="results numbered">
-        <li ng-repeat="match in source.matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)">
-            <div data-mega-typeahead-match index="$index" match="match" query="query" template-url="matchTemplateUrl"></div>
-        </li>
-    </ul>
-</div>
+<ul class="results">
+    <li class="heading">
+        <div data-mega-typeahead-header template-url="headerTemplateUrl"></div>
+    </li>
+</ul>
+<ul class="results numbered">
+    <li ng-repeat="match in source.matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)">
+        <div data-mega-typeahead-match index="$index" match="match" query="query" template-url="matchTemplateUrl"></div>
+    </li>
+</ul>
