@@ -1,0 +1,12 @@
+<div data-ng-repeat="source in master.sources" data-ng-show="source.aggregateMatches.length">
+    <ul class="results">
+        <li class="heading">
+            <div data-mega-typeahead-header template-url="headerTemplateUrl"></div>
+        </li>
+    </ul>
+    <ul class="results numbered">
+        <li ng-repeat="match in source.aggregateMatches" ng-class="{active: isActiveAllTab($index, $parent.$index, master.sources) }" ng-mouseenter="selectActive($index, source)" ng-click="selectMatch($index, match)">
+            <div data-mega-typeahead-match index="$index" match="match" query="query" template-url="matchTemplateUrl"></div>
+        </li>
+    </ul>
+</div>

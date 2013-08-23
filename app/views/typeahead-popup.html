@@ -1,4 +1,5 @@
 <div class="megatypeahead" ng-style="{display: isOpen()&&'block' || 'none', top: position.top+'px', left: position.left+'px'}" style="width:800px;height:360px; padding:5px; background:white;">
+    blah!!!!!!
     <tabset>
         <!--<tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
             {{tab.content}}
@@ -7,7 +8,7 @@
             <tab-heading>Campaigns</tab-heading>
             <ul style="height:300px;columns:200px 2;-webkit-columns:200px 2;-moz-columns:200px 2" class="typeahead" ng-style="{display: isOpen()&&'block' || 'none'}">
                 <li ng-repeat="match in matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)">
-                    <typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></typeahead-match>
+                    <mega-typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></mega-typeahead-match>
                 </li>
             </ul>
         </tab>
@@ -15,7 +16,7 @@
             <tab-heading>Cells</tab-heading>
             <ul style="height:300px;columns:200px 2;-webkit-columns:200px 2;-moz-columns:200px 2" class="typeahead" ng-style="{display: isOpen()&&'block' || 'none'}">
                 <li ng-repeat="match in matches" ng-class="{active: isActive($index) }" ng-mouseenter="selectActive($index)" ng-click="selectMatch($index)">
-                    <typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></typeahead-match>
+                    <mega-typeahead-match index="$index" match="match" query="query" template-url="templateUrl"></mega-typeahead-match>
                 </li>
             </ul>
         </tab>

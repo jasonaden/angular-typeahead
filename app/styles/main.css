@@ -1,0 +1,420 @@
+/* Beginning of CodePen styles, remove for dev */
+/* line 3, main.scss */
+html, body {
+  margin: 1em;
+  padding: 0;
+  font: normal 400 100.01%/1em Helvetica,Arial,"Lucida Grande",sans-serif;
+}
+
+/* line 4, main.scss */
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* line 5, main.scss */
+.clear {
+  clear: both !important;
+}
+
+/* line 8, main.scss */
+#typeahead .input-label {
+  font-weight: 500;
+  font-size: 12px;
+  color: #585858;
+  margin-right: 100px;
+}
+
+/* line 11, main.scss */
+.ic20 {
+  display: inline-block;
+  background-image: url("https://dl.dropboxusercontent.com/u/1621719/Demos/CodePen/Typeahead/20_sprite.png");
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+}
+/* line 17, main.scss */
+.ic20 label {
+  display: block;
+  width: 300px;
+  margin-left: 30px;
+  line-height: 20px;
+}
+
+/* line 19, main.scss */
+a.ic20, a.ic28 {
+  display: block;
+}
+
+/* Beginning of CodePen styles, remove for dev */
+/* App styles below. Use everything from here to the end of the file */
+/* line 29, main.scss */
+.megatypeahead.page2 .numbered {
+  counter-reset: number 20 !important;
+}
+
+/* line 29, main.scss */
+.megatypeahead.page3 .numbered {
+  counter-reset: number 30 !important;
+}
+
+/* line 29, main.scss */
+.megatypeahead.page4 .numbered {
+  counter-reset: number 40 !important;
+}
+
+/* line 29, main.scss */
+.megatypeahead.page5 .numbered {
+  counter-reset: number 60 !important;
+}
+
+/* line 29, main.scss */
+.megatypeahead.page6 .numbered {
+  counter-reset: number 80 !important;
+}
+
+/* line 29, main.scss */
+.megatypeahead.page7 .numbered {
+  counter-reset: number 100 !important;
+}
+
+/* line 70, main.scss */
+.ta-search:before {
+  content: "";
+  position: absolute;
+  margin: 33px 0 0 100px;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 10px solid #fff;
+  -webkit-filter: drop-shadow(0px -2px 2px #dddddd);
+  -moz-filter: drop-shadow(0px -2px 2px #dddddd);
+  -ms-filter: drop-shadow(0px -2px 2px #dddddd);
+  -o-filter: drop-shadow(0px -2px 2px #dddddd);
+  filter: drop-shadow(0px -2px 2px #dddddd);
+}
+
+/* line 81, main.scss */
+.megatypeahead {
+  width: 1200px;
+  position: absolute;
+}
+/* line 84, main.scss */
+.megatypeahead .results-wrapper {
+  height: 300px;
+  max-width: 1200px;
+  border: 1px solid #CFCFCF;
+  -webkit-border-radius: 5px 5px 2px 2px;
+  -moz-border-radius: 5px 5px 2px 2px;
+  -ms-border-radius: 5px 5px 2px 2px;
+  border-radius: 5px 5px 2px 2px;
+  -webkit-box-shadow: 0 0 5px #cccccc;
+  -moz-box-shadow: 0 0 5px #cccccc;
+  box-shadow: 0 0 5px #cccccc;
+}
+/* line 91, main.scss */
+.megatypeahead .results-header {
+  /* Use the mixin when moved to dev */
+  border-bottom: 1px solid #CFCFCF;
+  background: #ffffff;
+  background: -moz-linear-gradient(top, white 0%, #f1f1f1 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #f1f1f1));
+  background: -webkit-linear-gradient(top, white 0%, #f1f1f1 100%);
+  background: -o-linear-gradient(top, white 0%, #f1f1f1 100%);
+  background: -ms-linear-gradient(top, white 0%, #f1f1f1 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #f1f1f1 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f1f1f1',GradientType=0 );
+  /* Mixin
+  background-color: #ffffff;
+  @include filter-gradient(#ffffff, #f1f1f1, vertical);
+  @include background-image(linear-gradient(top,  #ffffff 0%,#f1f1f1 100%));
+  */
+}
+/* line 107, main.scss */
+.megatypeahead .results-header ul.tabs {
+  margin-top: 8px;
+  padding-left: 8px;
+  height: 21px;
+}
+/* line 112, main.scss */
+.megatypeahead .results-header ul.tabs li {
+  float: left;
+  margin-right: 2px;
+}
+/* line 115, main.scss */
+.megatypeahead .results-header ul.tabs li a {
+  display: block;
+  width: 80px;
+  background: #E6E6E6;
+  font-size: 11px;
+  color: #585858;
+  text-align: center;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-bottom: 1px solid #CFCFCF;
+  -webkit-border-radius: 4px 4px 0;
+  -moz-border-radius: 4px 4px 0;
+  -ms-border-radius: 4px 4px 0;
+  border-radius: 4px 4px 0;
+}
+/* line 128, main.scss */
+.megatypeahead .results-header ul.tabs li a:hover {
+  color: #0193CF;
+  background: #f3f3f3;
+  text-decoration: underline;
+}
+/* line 130, main.scss */
+.megatypeahead .results-header ul.tabs li.active a {
+  background: #fff;
+  border: 1px solid #CFCFCF;
+  border-bottom: 1px solid transparent;
+}
+/* line 135, main.scss */
+.megatypeahead .results-header ul.tabs li.disabled {
+  color: #999;
+  cursor: default;
+}
+/* line 138, main.scss */
+.megatypeahead .results-header ul.tabs li.disabled:hover {
+  background: #E6E6E6;
+}
+/* line 142, main.scss */
+.megatypeahead .results-header .pagination {
+  margin: 5px 10px 0 0;
+}
+/* line 144, main.scss */
+.megatypeahead .results-header .pagination ul {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+/* line 147, main.scss */
+.megatypeahead .results-header .pagination ul li a {
+  background-color: transparent;
+  border: 0;
+  color: #585858;
+}
+/* line 151, main.scss */
+.megatypeahead .results-header .pagination ul li a:hover {
+  color: #0193CF;
+  text-decoration: underline;
+}
+/* line 153, main.scss */
+.megatypeahead .results-header .pagination ul li.active a {
+  font-weight: 700;
+  color: #0193CF;
+}
+/* line 157, main.scss */
+.megatypeahead .results-header .pagination .page-left {
+  background-position: -140px -260px;
+  background-color: #e4e4e4 !important;
+  height: 9px;
+  width: 5px;
+  padding: 5px 7px !important;
+  margin-right: 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
+}
+/* line 165, main.scss */
+.megatypeahead .results-header .pagination .page-left:hover {
+  background-color: #ddd !important;
+}
+/* line 166, main.scss */
+.megatypeahead .results-header .pagination .page-left.disabled {
+  background-position: -160px -260px;
+  background-color: #EFEFEF !important;
+}
+/* line 169, main.scss */
+.megatypeahead .results-header .pagination .page-left.disabled:hover {
+  background-color: #EFEFEF !important;
+}
+/* line 172, main.scss */
+.megatypeahead .results-header .pagination .page-right {
+  background-position: -180px -260px;
+  background-color: #e4e4e4 !important;
+  height: 9px;
+  width: 5px;
+  margin-right: 5px;
+  padding: 5px 7px !important;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
+}
+/* line 180, main.scss */
+.megatypeahead .results-header .pagination .page-right:hover {
+  background-color: #ddd !important;
+}
+/* line 181, main.scss */
+.megatypeahead .results-header .pagination .page-right.disabled {
+  background-position: -200px -260px;
+  background-color: #EFEFEF !important;
+}
+/* line 184, main.scss */
+.megatypeahead .results-header .pagination .page-right.disabled:hover {
+  background-color: #EFEFEF !important;
+}
+/* line 189, main.scss */
+.megatypeahead .results-content {
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+  -webkit-column-gap: 0;
+  -moz-column-gap: 0;
+  column-gap: 0;
+  -webkit-column-fill: auto;
+  -moz-column-fill: auto;
+  -ms-column-fill: auto;
+  -o-column-fill: auto;
+  column-fill: auto;
+  height: 280px;
+}
+/* line 193, main.scss */
+.megatypeahead .results-content .divide {
+  width: 600px;
+  height: 250px;
+}
+/* line 196, main.scss */
+.megatypeahead .results-content .divide:nth-of-type(2) {
+  height: auto !important;
+  overflow: hidden;
+}
+/* line 202, main.scss */
+.megatypeahead .results-content ul.results.numbered {
+  counter-reset: number;
+}
+/* line 206, main.scss */
+.megatypeahead .results-content ul.results.numbered li > div:first-of-type:before {
+  color: #ccc;
+  content: "" counter(number) ". ";
+  counter-increment: number;
+}
+/* line 213, main.scss */
+.megatypeahead .results-content ul.results li {
+  width: 100%;
+}
+/* line 215, main.scss */
+.megatypeahead .results-content ul.results li a {
+  color: #585858;
+}
+/* line 216, main.scss */
+.megatypeahead .results-content ul.results li:hover {
+  background: #0193CF !important;
+}
+/* line 218, main.scss */
+.megatypeahead .results-content ul.results li:hover span {
+  color: #fff;
+}
+/* line 219, main.scss */
+.megatypeahead .results-content ul.results li:hover a {
+  color: #fff;
+}
+/* line 220, main.scss */
+.megatypeahead .results-content ul.results li:hover a.test, .megatypeahead .results-content ul.results li:hover a.controls, .megatypeahead .results-content ul.results li:hover a.list {
+  display: block;
+}
+/* line 222, main.scss */
+.megatypeahead .results-content ul.results li:hover > div {
+  color: #fff;
+  background: #0193CF;
+}
+/* line 223, main.scss */
+.megatypeahead .results-content ul.results li:hover > div:nth-of-type(2), .megatypeahead .results-content ul.results li:hover > div:nth-of-type(2) div {
+  color: #fff;
+  background: #0193CF;
+  border-color: transparent;
+}
+/* line 225, main.scss */
+.megatypeahead .results-content ul.results li div {
+  float: left;
+  padding: 0 0 0 10px;
+  font-size: 11px;
+  color: #565656;
+}
+/* line 230, main.scss */
+.megatypeahead .results-content ul.results li div:nth-of-type(even) {
+  background: #FAFAFA;
+  border-right: 1px solid #F1F1F1;
+  border-left: 1px solid #F1F1F1;
+}
+/* line 231, main.scss */
+.megatypeahead .results-content ul.results li div span {
+  color: red;
+  font-weight: 700;
+}
+/* line 232, main.scss */
+.megatypeahead .results-content ul.results li div a.test, .megatypeahead .results-content ul.results li div a.controls, .megatypeahead .results-content ul.results li div a.list {
+  float: right;
+  display: inline-block;
+  margin: 0 2px;
+  display: none;
+}
+/* line 233, main.scss */
+.megatypeahead .results-content ul.results li div a.list {
+  width: 10px;
+  height: 20px;
+  background: url("https://dl.dropboxusercontent.com/u/1621719/Demos/CodePen/Typeahead/list.gif");
+}
+/* line 235, main.scss */
+.megatypeahead .results-content ul.results li > div:nth-of-type(1), .megatypeahead .results-content ul.results li > div:nth-of-type(2) {
+  width: 288px;
+}
+/* line 236, main.scss */
+.megatypeahead .results-content ul.results li .divide-3 {
+  width: 278px;
+  display: inline-block;
+  padding-top: 0;
+  -webkit-column-count: 3;
+  -moz-column-count: 3;
+  column-count: 3;
+  -webkit-column-gap: 0;
+  -moz-column-gap: 0;
+  column-gap: 0;
+}
+/* line 241, main.scss */
+.megatypeahead .results-content ul.results li .divide-3 div {
+  padding: 0;
+  max-width: 90px;
+  border-color: transparent;
+}
+/* line 243, main.scss */
+.megatypeahead .results-content ul.results li .divide-3 div:nth-of-type(2) {
+  white-space: nowrap;
+  min-width: 80px;
+}
+/* line 247, main.scss */
+.megatypeahead .results-content ul.results li.heading .divide-3 div {
+  padding-top: 0;
+}
+/* line 248, main.scss */
+.megatypeahead .results-content ul.results li.heading:hover {
+  background: #FFF !important;
+}
+/* line 249, main.scss */
+.megatypeahead .results-content ul.results li.heading:hover > div, .megatypeahead .results-content ul.results li.heading:hover .divide-3 div {
+  color: #999;
+  background: #FFF;
+}
+/* line 250, main.scss */
+.megatypeahead .results-content ul.results li.heading:hover > div:nth-of-type(even) {
+  background: #FAFAFA;
+  border-color: #F1F1F1;
+}
+/* line 251, main.scss */
+.megatypeahead .results-content ul.results li.heading div {
+  color: #999;
+  padding-top: 10px;
+}
+/* line 254, main.scss */
+.megatypeahead .results-content ul.results li.heading div:hover {
+  background: #fff !important;
+}
+/* line 255, main.scss */
+.megatypeahead .results-content ul.results li.heading div:nth-of-type(even):hover {
+  background: #FAFAFA !important;
+}

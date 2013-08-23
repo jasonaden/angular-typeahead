@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('megatypeaheadApp', ['ui.bootstrap'])
+angular.module('megatypeaheadApp', ['ui.bootstrap', 'mega.typeahead'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
