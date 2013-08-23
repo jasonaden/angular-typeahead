@@ -67,8 +67,9 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     angular.extend(scope.master, {
                         query: undefined,
                         sources: sources,
-                        tab: 0,
-                        activeIdx: 0,
+                        aggregateTab: options.aggregateTab,
+                        tab: -1,
+                        activeIdx: -1,
                         // TODO: need to adjust the select method
                         select: 'select(activeIdx)'
                     });
@@ -77,6 +78,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                         scope.master.query = undefined;
                         angular.forEach(sources, function (source, idx) {
                             source.matches = [];
+                            source.aggregateMatches = [];
                             source.pageCount = undefined;
                             source.offset = 0;
                         });
@@ -87,7 +89,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     var popUpEl = angular.element('<div data-mega-typeahead-popup></div>'),
                         updateSearch = function (inputValue) {
 
-                            scope.master.currentSource.activeIdx = -1;
+                            scope.master.activeIdx = -1;
                             scope.master.query = inputValue;
                             //position pop-up with matches - we need to re-calculate its position each time we are opening a window
                             //with matches as a pop-up might be absolute-positioned and position of an input might have changed on a page
@@ -159,16 +161,16 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                         // TODO: WORK IN WRAPPING AROUND AFTER DOING PAGING
                         if (evt.which === 40) {
-                            scope.master.currentSource.activeIdx = (scope.master.currentSource.activeIdx + 1);
+                            scope.master.activeIdx = (scope.master.activeIdx + 1);
                             scope.$digest();
 
                         } else if (evt.which === 38) {
-                            scope.master.currentSource.activeIdx = (scope.master.currentSource.activeIdx >= 0 ? scope.master.currentSource.activeIdx : 0) - 1;
+                            scope.master.activeIdx = (scope.master.activeIdx >= 0 ? scope.master.activeIdx : 0) - 1;
                             scope.$digest();
 
                         } else if (evt.which === 13 || evt.which === 9) {
                             scope.$apply(function () {
-                                scope.select(scope.master.currentSource.activeIdx);
+                                scope.select(scope.master.activeIdx);
                             });
 
                         } else if (evt.which === 27) {
@@ -208,12 +210,13 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
                     // Set the current tab so we know where we are. Change selected index to -1 when changing tabs.
                     scope.currentTab = function (idx, source) {
-                        scope.master.currentSource.active = false;
+                        if(scope.master.currentSource)
+                            scope.master.currentSource.active = false;
                         source.active = true;
-                        scope.master.tab = idx || 0;
+                        scope.master.tab = angular.isUndefined(idx) ? -1 : idx;
                         scope.master.activeIdx = -1;
                         scope.master.currentSource = source;
-                        scope.master.currentSource.activeIdx = -1;
+                        scope.master.activeIdx = -1;
                         element[0].focus();
                     };
 
@@ -226,9 +229,9 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     });
 
                     element.after($compile(popUpEl)(scope));
-                    scope.master.currentSource = sources[0];
+                    //scope.master.currentSource = sources[0];
                     //scope.master.matches = {};
-                    sources[0].active = true;
+                    //sources[0].active = true;
                 }
             }
         }])
@@ -259,20 +262,22 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     popUpEl.attr('template-url', attrs.typeaheadTemplateUrl);
                 }
 
-                var tabName = scope.source.tabName;
                 var resetMatches = function () {
                     scope.source.matches = [];
+                    scope.source.aggregateMatches = [];
                     //scope.master.matches[tabName] = [];
                     scope.activeIdx = -1;
                 };
 
-
+                resetMatches();
                 var getMatchesAsync = function (inputValue) {
 
                     if(!parserResult) return;
                     var locals = {$viewValue: inputValue, limit: scope.source.limit || 20, offset: scope.source.offset || 0};
                     isLoadingSetter(scope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
+
+                        resetMatches();
 
                         //it might happen that several async queries were in progress if a user were typing fast
                         //but we are interested only in responses that correspond to the current view value
@@ -289,6 +294,12 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                                         data: parserResult.viewMapper(scope, locals),
                                         model: matches[i]
                                     });
+                                    if (i < 5) {
+                                        scope.source.aggregateMatches.push({
+                                            data: parserResult.viewMapper(scope, locals),
+                                            model: matches[i]
+                                        });
+                                    }
                                 }
                                 scope.source.matching_items = matches.matching_items;
                                 scope.source.pageCount = Math.ceil(matches.matching_items / scope.source.limit);
@@ -314,7 +325,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 //bind keyboard events: arrows up(38) / down(40), enter(13) and tab(9), esc(27)
                 scope.$watch('master.query', function (val, prev) {
                     if(val === prev){ return; }
-                    resetMatches();
+                    //resetMatches();
                     if (val && val.length) {
                         getMatchesAsync(val);
                     }
@@ -344,20 +355,16 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                 };
 
                 scope.isActive = function (matchIdx) {
-                    return scope.master.currentSource.activeIdx == matchIdx;
+                    return scope.master.activeIdx == matchIdx;
                 };
 
                 scope.isActiveAllTab = function (matchIdx, parentIdx, sources) {
                     var cnt = -1;
-                    parentIdx = parentIdx + 1;
-                    for(var i = 1 ; i < sources.length ; i++) {
+                    for(var i = 0 ; i < sources.length ; i++) {
                         var source = sources[i];
-                        for(var j = 0 ; j < source.matches.length ; j++) {
-                            if (j > 4) {
-                                break;
-                            }
+                        for(var j = 0 ; j < source.aggregateMatches.length ; j++) {
                             cnt++;
-                            if (scope.master.currentSource.activeIdx === cnt) {
+                            if (scope.master.activeIdx === cnt) {
                                 if (i === parentIdx && matchIdx === j)
                                     return true;
                             }

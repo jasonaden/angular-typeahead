@@ -11,11 +11,13 @@
                 </ul>
             </div>
             <ul class="tabs">
-                <li data-ng-repeat="source in master.sources" data-ng-class="{active:source.active}" data-ng-click="currentTab($index, source)">{{source.tabName}}</li>
+                <li data-ng-class="{active:master.tab == -1}" data-ng-show="master.aggregateTab" data-ng-click="currentTab(-1, master.aggregateTab)">{{ master.aggregateTab.tabName }}</li>
+                <li data-ng-repeat="source in master.sources" data-ng-class="{active:source.active, disabled: !source.matches.length}" data-ng-click="source.matches.length && currentTab($index, source)">{{source.tabName}}</li>
             </ul>
         </div>
         <div class="results-content">
             <!--<div data-ng-repeat="source in master.sources" mega-typeahead-pane="source.source" mega-typeahead-tab="source.tabName" ng-controller="source.controller" data-ng-show="source.active">-->
+            <div mega-typeahead-pane="master.aggregateTab" data-ng-show="master.tab == -1"></div>
             <div data-ng-repeat="source in master.sources" mega-typeahead-pane="source" data-ng-show="source.active"></div>
         </div>
     </div>

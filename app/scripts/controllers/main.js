@@ -25,11 +25,13 @@ angular.module('megatypeaheadApp')
             minSearch: 1,
             waitTime: 0,
             multiple: true,
+            aggregateTab: {
+                tabName: 'All',
+                paneUrl: "'views/all-pane.html'",
+                maxCount: 5
+            },
             sources: [
                 {
-                    tabName: 'All',
-                    paneUrl: "'views/all-pane.html'"
-                },{
                     tabName: 'States-Cities',
                     data: cities,
                     headerTemplateUrl: "'views/city-header.html'",
@@ -95,7 +97,7 @@ angular.module('megatypeaheadApp')
                             console.log(type + ': ' + data);
                         }
                     },
-                    source: 'suggestion for suggestion in cities($viewValue, limit, offset)'
+                    source: 'suggestion for suggestion in states | filter: $viewValue'
                 },
                 {
                     tabName: 'States',
