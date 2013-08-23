@@ -1,0 +1,50 @@
+/* Beginning of CodePen styles, remove for dev */
+/* line 3, app.scss */
+html, body {
+  margin: 1em;
+  padding: 0;
+  font: normal 400 100.01%/1em Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+/* line 4, app.scss */
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* line 5, app.scss */
+.clear {
+  clear: both !important;
+}
+
+/* line 8, app.scss */
+#typeahead .input-label {
+  font-weight: 500;
+  font-size: 12px;
+  color: #585858;
+  margin-right: 100px;
+}
+
+/* line 11, app.scss */
+.ic20 {
+  display: inline-block;
+  background-image: url("https://dl.dropboxusercontent.com/u/1621719/Demos/CodePen/Typeahead/20_sprite.png");
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+}
+/* line 17, app.scss */
+.ic20 label {
+  display: block;
+  width: 300px;
+  margin-left: 30px;
+  line-height: 20px;
+}
+
+/* line 19, app.scss */
+a.ic20, a.ic28 {
+  display: block;
+}
+
+/* Beginning of CodePen styles, remove for dev */
