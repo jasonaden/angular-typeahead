@@ -223,7 +223,7 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
 
 
                     $document.bind('click', function (e) {
-                        if($.contains(document.getElementsByClassName('megatypeahead')[0], e.target )){ return; }
+                        if(element.is(e.target) || $.contains(document.getElementsByClassName('megatypeahead')[0], e.target )){ return; }
                         resetMatches();
                         scope.$digest();
                     });
@@ -358,26 +358,25 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     return scope.master.activeIdx == matchIdx;
                 };
 
-                scope.isActiveAllTab = function (matchIdx, parentIdx, sources) {
-                    var cnt = -1;
+                scope.isActiveAllTab = function (matchIdx, parentIdx) {
+                    var cnt = 0, sources = scope.master.sources;
                     for(var i = 0 ; i < sources.length ; i++) {
-                        var source = sources[i];
-                        for(var j = 0 ; j < source.aggregateMatches.length ; j++) {
-                            cnt++;
-                            if (scope.master.activeIdx === cnt) {
-                                if (i === parentIdx && matchIdx === j)
-                                    return true;
-                            }
-
-
-                        }
+                        if(parentIdx>i){ cnt += sources[i].aggregateMatches.length; continue; }
+                        return scope.master.activeIdx === (cnt + matchIdx);
                     }
                     return false;
                 };
 
-                scope.selectActive = function (matchIdx, source) {
-                    if(source)
-                        source.activeIdx = matchIdx;
+                scope.selectActive = function (matchIdx, parentIdx) {
+                    if(parentIdx>=0){
+                        var cnt = 0, sources = scope.master.sources;
+                        for(var i = 0 ; i < sources.length ; i++) {
+                            if(parentIdx>i){ cnt += sources[i].aggregateMatches.length; continue; }
+                            scope.master.activeIdx = cnt + matchIdx;
+                        }
+                    }else{
+                        scope.master.activeIdx = matchIdx;
+                    }
                 };
 
                 scope.selectMatch = function (matchIdx, match) {

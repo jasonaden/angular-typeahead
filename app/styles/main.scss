@@ -213,14 +213,14 @@ $numbers:20,30,40,60,80,100,120;
       li {
         width:100%;
         a {color:#585858;}
-        &:hover {
+        &.active {
           background:#0193CF !important;
           span {color:#fff}
           a {color:#fff}
           a.test,a.controls,a.list {display:block}
         }
-        &:hover > div {color:#fff;background:#0193CF}
-        &:hover > div:nth-of-type(2), &:hover > div:nth-of-type(2) div {color:#fff;background:#0193CF;border-color:transparent}
+        &.active > div {color:#fff;background:#0193CF}
+        &.active > div:nth-of-type(2), &.active > div:nth-of-type(2) div {color:#fff;background:#0193CF;border-color:transparent}
 
         div {
           float:left;

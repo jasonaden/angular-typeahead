@@ -5,7 +5,7 @@
         </li>
     </ul>
     <ul class="results numbered">
-        <li ng-repeat="match in source.aggregateMatches" ng-class="{active: isActiveAllTab($index, $parent.$index, master.sources) }" ng-mouseenter="selectActive($index, source)" ng-click="selectMatch($index, match)">
+        <li ng-repeat="match in source.aggregateMatches" ng-class="{active: isActiveAllTab($index, $parent.$index) }" ng-mouseenter="selectActive($index, $parent.$index)" ng-click="selectMatch($index, match)">
             <div data-mega-typeahead-match index="$index" match="match" query="query" template-url="matchTemplateUrl"></div>
         </li>
     </ul>
