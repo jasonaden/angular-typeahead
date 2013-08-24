@@ -81,7 +81,7 @@ angular.module('megatypeaheadApp')
                     },
                     limit: 20,
                     source: 'suggestion for suggestion in getCampaigns($viewValue, limit, offset)'
-                },{
+                }/*,{
                     tabName: 'States-Cities',
                     data: cities,
                     headerTemplateUrl: "'views/city-header.html'",
@@ -154,7 +154,7 @@ angular.module('megatypeaheadApp')
                     data: states,
                     headerTemplateUrl: "'views/city-header.html'",
                     source: 'state for state in source.data | limitTo:20'
-                }
+                }*/
             ]
         }
 
