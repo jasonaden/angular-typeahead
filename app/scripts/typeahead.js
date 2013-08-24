@@ -277,11 +277,10 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                     isLoadingSetter(scope, true);
                     $q.when(parserResult.source(scope, locals)).then(function (matches) {
 
-                        resetMatches();
-
                         //it might happen that several async queries were in progress if a user were typing fast
                         //but we are interested only in responses that correspond to the current view value
                         if (inputValue === scope.master.query) {
+                            resetMatches();
                             if (matches.length > 0) {
 
                                 scope.source.activeIdx = -1;
@@ -305,9 +304,9 @@ angular.module('mega.typeahead', ['ui.bootstrap.position'])
                                 scope.source.pageCount = Math.ceil(matches.matching_items / scope.source.limit);
                                 //scope.master.matches[tabName].matching_items = matches.matching_items;
                                 //scope.master.matches[tabName].pageCount = Math.ceil(matches.matching_items / locals.limit);
-                            } else {
+                            }/* else {
                                 resetMatches();
-                            }
+                            }*/
                             isLoadingSetter(scope, false);
                         }
                     }, function () {
